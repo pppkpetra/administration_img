@@ -1,0 +1,23 @@
+ stages:
+  - build
+ image: docker:stable
+ 
+ services:
+  - docker:dind
+  
+ build:
+    stage: build
+    variables:
+      GIT_STRATEGY: clone
+    script:
+      - docker login https://registry.pppkpetra.local:5000 -u admin -p Nutanix/4u
+      - docker build -f Dockerfile -t counseling_img .
+      - docker login -u williampetra -p 1tp3tr4
+      - docker tag counseling_img registry.pppkpetra.local:5000/counseling_img
+      - docker push registry.pppkpetra.local:5000/counseling_img
+    only:
+       variables:
+         - $CI_COMMIT_MESSAGE =~ /bungkus/
+         - $CI_COMMIT_MESSAGE =~ /bangun & bungkus/
+    tags:
+      - vm_runner
